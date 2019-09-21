@@ -1,20 +1,18 @@
 package bot_telegram_for_organize_football.bot;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Contact;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 public class Organize5FootballBot extends TelegramLongPollingBot{
 
-	private Map<Long,Set<String>> match;
+	private Map<Long,Set<String>> match= new HashMap<Long, Set<String>>();
 	
 	public String getBotUsername() {
 		return "Organize5FootballBot";
@@ -28,7 +26,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			long chat_id= update.getMessage().getChatId();
 			
 			
-			User user = update.getMessage().getFrom();
+			String user = update.getMessage().getFrom().getUserName();
 //			System.out.println(aux.getFirstName());
 //			System.out.println(aux.getLastName());
 //			System.out.println(aux.toString());
@@ -38,17 +36,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			
 			/*case booking of a person*/
 			if(message_text.contains("ci sono") || message_text.contains("presente")) {
-				Set<String> current_match= new HashSet<String>();
-				current_match=this.match.get(chat_id);
-				if(!current_match.contains(user.getUserName())) {
-					current_match.add(user.getUserName());
-					if(current_match.size()==10) {
-						message.setChatId(chat_id);
-						message.setText("Formazione al completo");
-					}
-						
-				}
-				
+				booking(chat_id, message, user, this.match);
 			}
 			
 //			message.setChatId(chat_id);
@@ -64,6 +52,19 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 		
 	}
 
+	public static void booking(long chat_id, SendMessage message, String user, Map<Long,Set<String>> match) {
+		Set<String> current_match= new HashSet<String>();
+		current_match=match.get(chat_id);
+		if(!current_match.contains(user)) {
+			current_match.add(user);
+			if(current_match.size()==10) {
+				message.setChatId(chat_id);
+				message.setText("Formazione al completo");
+			}
+				
+		}
+	}
+	
 	@Override
 	public String getBotToken() {
 		/*token of the bot is in the private class*/
