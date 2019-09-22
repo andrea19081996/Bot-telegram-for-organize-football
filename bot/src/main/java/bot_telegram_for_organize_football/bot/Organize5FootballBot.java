@@ -2,6 +2,7 @@ package bot_telegram_for_organize_football.bot;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,7 +60,13 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 		if(!current_match.contains(user) && current_match.size()<10) {
 			current_match.add(user);
 			if(current_match.size()==10) {
-				message.setText("Formazione al completo");
+				String match_person = "Partità per GIORNO alle ore XX: \n";
+				Iterator<String> i= current_match.iterator();
+				while(i.hasNext()) {
+					match_person= match_person.concat(i.next()+ "\n");
+				}
+				match_person= match_person.concat("\nFormazione al completo");
+				message.setText(match_person);
 			}
 				
 		} else {
