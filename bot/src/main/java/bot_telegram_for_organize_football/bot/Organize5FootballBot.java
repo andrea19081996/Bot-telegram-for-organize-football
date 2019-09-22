@@ -28,11 +28,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			
 			
 			String user = update.getMessage().getFrom().getUserName();
-//			System.out.println(aux.getFirstName());
-//			System.out.println(aux.getLastName());
-//			System.out.println(aux.toString());
-//			System.out.println(aux.getUserName());
-			
+
 			SendMessage message= new SendMessage();
 			message.setChatId(chat_id);
 			
@@ -61,10 +57,8 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			current_match.add(user);
 			if(current_match.size()==10) {
 				String match_person = "Partità per GIORNO alle ore XX: \n";
-				Iterator<String> i= current_match.iterator();
-				while(i.hasNext()) {
-					match_person= match_person.concat(i.next()+ "\n");
-				}
+				String list_person_match= list_person_match(current_match);
+				match_person= match_person.concat(list_person_match);
 				match_person= match_person.concat("\nFormazione al completo");
 				message.setText(match_person);
 			}
@@ -76,6 +70,22 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 				message.setText(user + " per la partita già sono 10 sarà per la prossima");
 		}
 	}
+	
+	
+	/*returns the list of person in the current_match*/
+	public static String list_person_match(Set<String> current_match) {
+		String list_person_match;
+		Iterator<String> i= current_match.iterator();
+		if(i.hasNext()) {
+			list_person_match=i.next().concat("\n");
+			while(i.hasNext()) {
+				list_person_match= list_person_match.concat(i.next()+ "\n");
+			}
+			return list_person_match;
+		}
+		return "";
+	}
+	
 	
 	@Override
 	public String getBotToken() {

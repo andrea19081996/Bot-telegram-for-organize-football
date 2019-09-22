@@ -170,6 +170,6 @@ public class AppTest extends TestCase {
     	
     	assertEquals(match, match2);
     	System.out.println(message.getText());
-//    	assertEquals(message.getText(), "Partità per GIORNO alle ore XX: \n");
+    	assertEquals(message.getText(), "Partità per GIORNO alle ore XX: \na\nb\nc\nd\nandrea\nluca\ne\nf\ngianluca\nmario\n\nFormazione al completo");
     }
 }
