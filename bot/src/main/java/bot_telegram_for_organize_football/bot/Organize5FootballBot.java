@@ -18,7 +18,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	public String getBotUsername() {
 		return "Organize5FootballBot";
 	}
-
+	
 	public void onUpdateReceived(Update update) {
 		System.out.println("prova");
 			
@@ -32,27 +32,46 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			SendMessage message= new SendMessage();
 			message.setChatId(chat_id);
 			
+			Set<String> current_match= new HashSet<String>();
+			current_match=match.get(chat_id);
+			
 			/*case booking of a person*/
 			if(message_text.contains("ci sono") || message_text.contains("presente")) {
-				booking(chat_id, message, user, this.match);
+				booking(current_match, message, user, this.match);
+				
+				try {
+					execute(message);
+				} catch (TelegramApiException e) {
+					e.printStackTrace();
+				}
+			} else if(message_text.equals("/list")) {
+				message.setText(list_person_match(current_match));
+				
+				try {
+					execute(message);
+				} catch (TelegramApiException e) {
+					e.printStackTrace();
+				}
+			} else if(message_text.equals("/day_time")) { 
+				
+				message.setText("Scegli un giorno e un orario in cui far svolgere la partita");
 			}
 			
 //			message.setChatId(chat_id);
 //			message.setText("prova");
 			
 			
-			try {
-				execute(message);
-			} catch (TelegramApiException e) {
-				e.printStackTrace();
-			}
-		}
+//			try {
+//				execute(message);
+//			} catch (TelegramApiException e) {
+//				e.printStackTrace();
+//			}
+			
+		} 
 		
 	}
 
-	public static void booking(long chat_id, SendMessage message, String user, Map<Long,Set<String>> match) {
-		Set<String> current_match= new HashSet<String>();
-		current_match=match.get(chat_id);
+	public static void booking(Set<String> current_match, SendMessage message, String user, Map<Long,Set<String>> match) {
 		if(!current_match.contains(user) && current_match.size()<10) {
 			current_match.add(user);
 			if(current_match.size()==10) {
@@ -83,7 +102,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			}
 			return list_person_match;
 		}
-		return "";
+		return "Non c'è ancora nessuno per la partita";
 	}
 	
 	
