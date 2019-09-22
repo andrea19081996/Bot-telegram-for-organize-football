@@ -104,4 +104,31 @@ public class AppTest extends TestCase {
     	
     	assertEquals(match.get(1147483649L), match2.get(1147483649L));
     }
+    
+    /* case booking of a person already in the list*/
+    
+    public void testAppFailureBookingCase() {
+    	Map<Long,Set<String>> match= new HashMap<Long, Set<String>>();
+    	Set<String> set1= new HashSet<String>();
+    	set1.add("gianluca");
+    	set1.add("mario");
+    	set1.add("luca");
+    	match.put(2147483649L, set1);
+    	
+    	SendMessage message= new SendMessage();
+    	
+    	String user="mario";
+    	
+    	Organize5FootballBot.booking(2147483649L, message, user, match);
+    	
+    	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
+    	Set<String> set2= new HashSet<String>();
+    	set2.add("gianluca");
+    	set2.add("mario");
+    	set2.add("luca");
+    	match2.put(2147483649L, set2);
+    	
+    	assertEquals(match, match2);
+    	assertEquals(message.getText(), "mario già sei nella lista");
+    }
 }

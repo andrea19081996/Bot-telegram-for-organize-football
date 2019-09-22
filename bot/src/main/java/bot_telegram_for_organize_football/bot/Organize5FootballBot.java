@@ -33,6 +33,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 //			System.out.println(aux.getUserName());
 			
 			SendMessage message= new SendMessage();
+			message.setChatId(chat_id);
 			
 			/*case booking of a person*/
 			if(message_text.contains("ci sono") || message_text.contains("presente")) {
@@ -55,13 +56,17 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	public static void booking(long chat_id, SendMessage message, String user, Map<Long,Set<String>> match) {
 		Set<String> current_match= new HashSet<String>();
 		current_match=match.get(chat_id);
-		if(!current_match.contains(user)) {
+		if(!current_match.contains(user) && current_match.size()<10) {
 			current_match.add(user);
 			if(current_match.size()==10) {
-				message.setChatId(chat_id);
 				message.setText("Formazione al completo");
 			}
 				
+		} else {
+			if(current_match.contains(user))
+				message.setText(user + " già sei nella lista");
+			else
+				message.setText(user + " per la partita già sono 10 sarà per la prossima");
 		}
 	}
 	
