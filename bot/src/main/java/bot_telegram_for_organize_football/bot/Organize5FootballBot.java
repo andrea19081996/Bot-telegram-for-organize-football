@@ -33,16 +33,24 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			
 			clean_data(chat_id);
 
+			
 			String user = update.getMessage().getFrom().getUserName();
 
 			SendMessage message= new SendMessage();
 			message.setChatId(chat_id);
 			
+
+			
 			Set<String> current_match= new HashSet<String>();
 			current_match=match.get(chat_id);
 			
+			if(this.setting_match.get(chat_id)==null) {
+				
+				message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+				execution(message);
+				
 			/*case booking of a person*/
-			if(message_text.contains("ci sono") || message_text.contains("presente")) {
+			} else if(message_text.contains("ci sono") || message_text.contains("presente")) {
 				
 				booking(current_match, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
 				execution(message);
@@ -145,21 +153,24 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	
 	/*used for clean the old data*/
 	public void clean_data(long chat_id) {
-		
+		boolean i;
 		Date now= new Date();
 		Calendar calendar1= Calendar.getInstance();
 		calendar1.setTime(now);
-		
-		Date old= this.setting_match.get(chat_id).getDate();
-		Calendar calendar2= Calendar.getInstance();
-		calendar2.setTime(old);
-		calendar2.add(Calendar.WEEK_OF_YEAR, +1);
-		
-		boolean i= ((calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) > calendar2.get(Calendar.WEEK_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) == calendar2.get(Calendar.WEEK_OF_YEAR)) && (calendar1.get(Calendar.DAY_OF_YEAR) > calendar2.get(Calendar.DAY_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)));
-		
-		if (i==true) {
-			this.match.get(chat_id).clear();
-			this.setting_match.get(chat_id).clear();
+		if(this.setting_match.get(chat_id)==null)
+			i=false;
+		else {
+			Date old= this.setting_match.get(chat_id).getDate();
+			Calendar calendar2= Calendar.getInstance();
+			calendar2.setTime(old);
+			calendar2.add(Calendar.WEEK_OF_YEAR, +1);
+			
+			i= ((calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) > calendar2.get(Calendar.WEEK_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) == calendar2.get(Calendar.WEEK_OF_YEAR)) && (calendar1.get(Calendar.DAY_OF_YEAR) > calendar2.get(Calendar.DAY_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)));
+			
+			if (i==true) {
+				this.match.get(chat_id).clear();
+				this.setting_match.get(chat_id).clear();
+			}
 		}
 		
 	}
