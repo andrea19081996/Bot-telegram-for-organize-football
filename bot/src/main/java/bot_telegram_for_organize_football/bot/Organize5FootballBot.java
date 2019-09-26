@@ -39,27 +39,49 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			SendMessage message= new SendMessage();
 			message.setChatId(chat_id);
 			
-
+			Set<String> current_match=match.get(chat_id);
+			if (current_match==null) {
+				current_match= new HashSet<String>();
+			}
 			
-			Set<String> current_match= new HashSet<String>();
-			current_match=match.get(chat_id);
-			
-			if(this.setting_match.get(chat_id)==null) {
-				
-				message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+			if(is_a_date(message_text)) {
+				Singol_match singol= setting_match.get(chat_id);
+				Calendar calendar= Calendar.getInstance();
+				System.out.println(calendar.toString());
+				Date date = new Date();
+				if(singol==null)
+					singol= new Singol_match(date, message_text);
+				else {
+					singol.setDate(date);
+					singol.setDate_time(message_text);
+				}
+				this.setting_match.put(chat_id, singol);
+				message.setText("Impostata partita per " + message_text);
 				execution(message);
+			
+//			} else if(this.setting_match.get(chat_id)==null) {
+//				
+//				message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+//				execution(message);
 				
 			/*case booking of a person*/
 			} else if(message_text.contains("ci sono") || message_text.contains("presente")) {
-				
-				booking(current_match, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
-				execution(message);
+				if(this.setting_match.get(chat_id)==null) {
+					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+					execution(message);
+				}else {
+					booking(current_match, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
+					execution(message);
+				}
 				
 			} else if (message_text.contains("non ci sono")) {
-				
-				delete(current_match, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
-				execution(message);
-				
+				if(this.setting_match.get(chat_id)==null) {
+					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+					execution(message);
+				} else {
+					delete(current_match, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
+					execution(message);
+				}
 			} else if(message_text.equals("/list")) {
 				
 				message.setText(list_person_match(current_match));
@@ -70,20 +92,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 				message.setText("Scegli un giorno e un orario in cui far svolgere la partita\n Scrivere GIORNO e ORA per impostare correttamente la partita\n Esempio: Lunedì 19:00");
 				execution(message);
 				
-			} else if(is_a_date(message_text)) {
-				Singol_match singol= setting_match.get(chat_id);
-				Date date= new Date();
-				
-				if(singol==null)
-					singol= new Singol_match(date, message_text);
-				else {
-					singol.setDate(date);
-					singol.setDate_time(message_text);
-				}
-				message.setText("Impostata partita per " + message_text);
-				execution(message);
-			
-			}
+			} 
 			
 //			message.setChatId(chat_id);
 //			message.setText("prova");
@@ -168,7 +177,8 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			i= ((calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) > calendar2.get(Calendar.WEEK_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) == calendar2.get(Calendar.WEEK_OF_YEAR)) && (calendar1.get(Calendar.DAY_OF_YEAR) > calendar2.get(Calendar.DAY_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)));
 			
 			if (i==true) {
-				this.match.get(chat_id).clear();
+				if(this.match.get(chat_id)!=null)
+					this.match.get(chat_id).clear();
 				this.setting_match.get(chat_id).clear();
 			}
 		}
@@ -200,7 +210,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	
 	
 	public boolean is_a_day(String day) {
-		day.toLowerCase();
+		day=day.toLowerCase();
 		if (day.equals("lunedì") || day.equals("martedì") || day.equals("mercoledì") || day.equals("giovedì") || day.equals("venerdì") || day.equals("sabato") || day.equals("domenica"))
 			return true;
 		else 
@@ -208,7 +218,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	}
 	
 	public boolean is_a_time(String time) {
-		time.replace(" ", "");
+		time=time.replace(" ", "");
 		String[] array_time= time.split(":");
 		int hours= Integer.parseInt(array_time[0]);
 		int minute= Integer.parseInt(array_time[1]);
