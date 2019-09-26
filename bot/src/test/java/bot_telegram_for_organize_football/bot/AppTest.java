@@ -48,7 +48,7 @@ public class AppTest extends TestCase {
     	
     	String user="filippo";
     	
-    	Organize5FootballBot.booking(2147483649L, message, user, match);
+    	Organize5FootballBot.booking(match.get(2147483649L), message, user, match);
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set2= new HashSet<String>();
@@ -92,7 +92,7 @@ public class AppTest extends TestCase {
     	
     	String user="filippo";
     	
-    	Organize5FootballBot.booking(1147483649L, message, user, match);
+    	Organize5FootballBot.booking(match.get(1147483649L), message, user, match);
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set4= new HashSet<String>();
@@ -119,7 +119,7 @@ public class AppTest extends TestCase {
     	
     	String user="mario";
     	
-    	Organize5FootballBot.booking(2147483649L, message, user, match);
+    	Organize5FootballBot.booking(match.get(2147483649L), message, user, match);
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set2= new HashSet<String>();
@@ -152,7 +152,7 @@ public class AppTest extends TestCase {
     	
     	String user="andrea";
     	
-    	Organize5FootballBot.booking(2147483649L, message, user, match);
+    	Organize5FootballBot.booking(match.get(2147483649L), message, user, match);
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set2= new HashSet<String>();
