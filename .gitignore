@@ -4,3 +4,7 @@ target/classes/META-INF/
 bot/target/classes/bot_telegram_for_organize_football/bot/App.class
 
 bot/target/classes/bot_telegram_for_organize_football/bot/Organize5FootballBot.class
+
+bot/src/main/java/bot_telegram_for_organize_football/bot/AuxiliarClass.java
+
+bot/to_do
