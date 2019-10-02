@@ -1,6 +1,10 @@
 package bot_telegram_for_organize_football.bot;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,10 +32,16 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			
 		if(update.hasMessage() && update.getMessage().hasText()) {
 			
-			String message_text= update.getMessage().getText();
+			String message_text= update.getMessage().getText().toLowerCase();
+			message_text=message_text.replace("ì", "i");
 			long chat_id= update.getMessage().getChatId();
 			
-			clean_data(chat_id);
+			
+			try {
+				clean_data(chat_id);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 
 			
 			String user = update.getMessage().getFrom().getUserName();
@@ -46,9 +56,13 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			
 			if(is_a_date(message_text)) {
 				Singol_match singol= setting_match.get(chat_id);
-				Calendar calendar= Calendar.getInstance();
-				System.out.println(calendar.toString());
-				Date date = new Date();
+//				Calendar calendar= Calendar.getInstance();
+//				System.out.println(calendar.toString());
+//				Date date = new Date();
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
+				LocalDateTime now = LocalDateTime.now();  
+				System.out.println(dtf.format(now));
+				String date= dtf.format(now);
 				if(singol==null)
 					singol= new Singol_match(date, message_text);
 				else {
@@ -56,6 +70,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 					singol.setDate_time(message_text);
 				}
 				this.setting_match.put(chat_id, singol);
+				this.match.remove(chat_id);
 				message.setText("Impostata partita per " + message_text);
 				execution(message);
 			
@@ -65,26 +80,29 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 //				execution(message);
 				
 			/*case booking of a person*/
-			} else if(message_text.contains("ci sono") || message_text.contains("presente")) {
-				if(this.setting_match.get(chat_id)==null) {
-					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
-					execution(message);
-				}else {
-					booking(current_match, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
-					execution(message);
-				}
+			}else if (message_text.equals("non ci sono")) {
 				
-			} else if (message_text.contains("non ci sono")) {
 				if(this.setting_match.get(chat_id)==null) {
 					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
 					execution(message);
 				} else {
-					delete(current_match, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
+					delete(chat_id, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
 					execution(message);
 				}
+				
+			} else if(message_text.equals("ci sono") || message_text.equals("presente")) {
+				
+				if(this.setting_match.get(chat_id)==null) {
+					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+					execution(message);
+				}else {
+					booking(chat_id, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
+					execution(message);
+				}
+				
 			} else if(message_text.equals("/list")) {
 				
-				message.setText(list_person_match(current_match));
+				message.setText("Al momento ci sono\n"+list_person_match(current_match));
 				execution(message);
 				
 			} else if(message_text.equals("/day_time")) { 
@@ -108,36 +126,42 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 		
 	}
 
-	public static void booking(Set<String> current_match, SendMessage message, String user, Map<Long,Set<String>> match, String date) {
-		if(!current_match.contains(user) && current_match.size()<10) {
+	public static void booking(Long chat_id, SendMessage message, String user, Map<Long,Set<String>> match, String date) {
+		Set<String> current_match= match.get(chat_id);
+		if(current_match==null)
+			current_match= new HashSet<String>();
+		if(!(current_match.contains(user)) && current_match.size()<10) {
 			current_match.add(user);
 			String[] date_array= date.split(" ");
-			String match_person = "Partita per "+date_array[0]+" alle ore"+date_array[1]+": \n";
+			String match_person = "Partita per "+date_array[0]+" alle ore "+date_array[1]+": \n";
 			String list_person_match= list_person_match(current_match);
 			match_person= match_person.concat(list_person_match);
 			if(current_match.size()==10) {
 				match_person= match_person.concat("\nFormazione al completo");
 
 			}
+			match.put(chat_id, current_match);
 			message.setText(match_person);
 		} else {
-			if(current_match.contains(user))
+			if(current_match.contains(user)) {
 				message.setText(user + " già sei nella lista");
+			}
 			else
 				message.setText(user + " per la partita già sono 10 sarà per la prossima");
 		}
 	}
 	
 	
-	public void delete(Set<String> current_match, SendMessage message, String user, Map<Long,Set<String>> match, String date) {
-		
+	public void delete(Long chat_id, SendMessage message, String user, Map<Long,Set<String>> match, String date) {
+		Set<String> current_match= match.get(chat_id);
 		if(current_match.contains(user)) {
 			current_match.remove(user);
-				String[] date_array= date.split(" ");
-				String match_person = "Partita per "+date_array[0]+" alle ore"+date_array[1]+": \n";
-				String list_person_match= list_person_match(current_match);
-				match_person= match_person.concat(list_person_match);
-				message.setText(match_person);
+			String[] date_array= date.split(" ");
+			String match_person = "Partita per "+date_array[0]+" alle ore"+date_array[1]+": \n";
+			String list_person_match= list_person_match(current_match);
+			match_person= match_person.concat(list_person_match);
+			message.setText(match_person);
+			match.put(chat_id, current_match);
 				
 		} else {
 			if(!current_match.contains(user))
@@ -161,28 +185,35 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	}
 	
 	/*used for clean the old data*/
-	public void clean_data(long chat_id) {
+	public void clean_data(long chat_id) throws ParseException {
 		boolean i;
-		Date now= new Date();
+//		Date now= new Date();
+//		Calendar calendar1= Calendar.getInstance();
+//		calendar1.setTime(now);
+//		System.out.println(calendar1.getTime());
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
+		LocalDateTime now = LocalDateTime.now();
+		System.out.println(dtf.format(now));
+		String date= dtf.format(now);
 		Calendar calendar1= Calendar.getInstance();
-		calendar1.setTime(now);
-		if(this.setting_match.get(chat_id)==null)
-			i=false;
-		else {
-			Date old= this.setting_match.get(chat_id).getDate();
+		Date new_date= new SimpleDateFormat("yyyy/MM/dd").parse(date);
+		calendar1.setTime(new_date);
+		
+		
+		if(this.setting_match.get(chat_id)!=null) {
+			Date old= new SimpleDateFormat("yyyy/MM/dd").parse(this.setting_match.get(chat_id).getDate());
 			Calendar calendar2= Calendar.getInstance();
 			calendar2.setTime(old);
 			calendar2.add(Calendar.WEEK_OF_YEAR, +1);
 			
-			i= ((calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) > calendar2.get(Calendar.WEEK_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) == calendar2.get(Calendar.WEEK_OF_YEAR)) && (calendar1.get(Calendar.DAY_OF_YEAR) > calendar2.get(Calendar.DAY_OF_YEAR)) || (calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)));
-			
+			i= (((calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) > calendar2.get(Calendar.WEEK_OF_YEAR))) || ((calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)) && (calendar1.get(Calendar.WEEK_OF_YEAR) == calendar2.get(Calendar.WEEK_OF_YEAR)) && (calendar1.get(Calendar.DAY_OF_YEAR) > calendar2.get(Calendar.DAY_OF_YEAR))) || (calendar1.get(Calendar.YEAR) > calendar2.get(Calendar.YEAR)));
+			System.out.println(i);
 			if (i==true) {
 				if(this.match.get(chat_id)!=null)
-					this.match.get(chat_id).clear();
-				this.setting_match.get(chat_id).clear();
+					this.match.remove(chat_id);
+				this.setting_match.remove(chat_id);
 			}
 		}
-		
 	}
 	
 	
@@ -211,7 +242,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	
 	public boolean is_a_day(String day) {
 		day=day.toLowerCase();
-		if (day.equals("lunedì") || day.equals("martedì") || day.equals("mercoledì") || day.equals("giovedì") || day.equals("venerdì") || day.equals("sabato") || day.equals("domenica"))
+		if (day.equals("lunedi") || day.equals("martedi") || day.equals("mercoledi") || day.equals("giovedi") || day.equals("venerdi") || day.equals("sabato") || day.equals("domenica"))
 			return true;
 		else 
 			return false;

@@ -3,19 +3,19 @@ package bot_telegram_for_organize_football.bot;
 import java.util.Date;
 
 public class Singol_match {
-	private Date date;
+	private String date;
 	private String date_time;
 	
-	public Singol_match(Date date, String date_time) {
+	public Singol_match(String date, String date_time) {
 		this.date=date;
 		this.date_time=date_time;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
