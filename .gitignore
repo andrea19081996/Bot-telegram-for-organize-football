@@ -1,12 +1,6 @@
 
-bot/.classpath
+target/classes/META-INF/
 
-bot/.project
+bot/target/classes/bot_telegram_for_organize_football/bot/App.class
 
-bot/src/main/java/bot_telegram_for_organize_football/bot/AuxiliarClass.java
-
-bot/target/classes/bot_telegram_for_organize_football/bot/AuxiliarClass.class
-
-bot/target/classes/META-INF/
-
-bot/to_do
+bot/target/classes/bot_telegram_for_organize_football/bot/Organize5FootballBot.class
