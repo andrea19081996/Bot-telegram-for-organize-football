@@ -80,7 +80,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 //				execution(message);
 				
 			/*case booking of a person*/
-			}else if (message_text.equals("non ci sono")) {
+			}else if (message_text.equals("non ci sono") || message_text.equals("assente")) {
 				
 				if(this.setting_match.get(chat_id)==null) {
 					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
@@ -90,7 +90,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 					execution(message);
 				}
 				
-			} else if(message_text.equals("ci sono") || message_text.equals("presente")) {
+			} else if(message_text.equals("ci sono") || message_text.equals("presente") || message_text.equals("ci sto")) {
 				
 				if(this.setting_match.get(chat_id)==null) {
 					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
