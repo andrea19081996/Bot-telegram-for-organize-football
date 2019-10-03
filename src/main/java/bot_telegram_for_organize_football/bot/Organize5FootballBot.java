@@ -264,7 +264,8 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	@Override
 	public String getBotToken() {
 		/*token of the bot is in the private class*/
-		return AuxiliarClass.getToken();
+//		return AuxiliarClass.getToken();
+		return System.getenv("Auxiliar");
 	}
 
 }
