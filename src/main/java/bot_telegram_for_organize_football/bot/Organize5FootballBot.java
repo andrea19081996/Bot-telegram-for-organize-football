@@ -80,7 +80,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 //				execution(message);
 				
 			/*case booking of a person*/
-			}else if (message_text.equals("non ci sono") || message_text.equals("assente")) {
+			}else if (message_text.equals("non ci sono") || message_text.equals("assente") || message_text.equals("non ci sto")) {
 				
 				if(this.setting_match.get(chat_id)==null) {
 					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
