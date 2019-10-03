@@ -1,1 +1,1 @@
-worker: java target/App.java
+worker: java -cp target/classes:target/dependency/* bot_telegram_for_organize_football.bot.App
