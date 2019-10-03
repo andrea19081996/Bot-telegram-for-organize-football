@@ -21,7 +21,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 public class Organize5FootballBot extends TelegramLongPollingBot{
 
 	private Map<Long,Set<String>> match= new HashMap<Long, Set<String>>();
-	private Map<Long,Singol_match> setting_match = new HashMap<Long, Singol_match>() ; 
+	private Map<Long, Singol_match> setting_match = new HashMap<Long, Singol_match>() ; 
 	
 	public String getBotUsername() {
 		return "Organize5FootballBot";

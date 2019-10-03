@@ -1,7 +1,5 @@
 package bot_telegram_for_organize_football.bot;
 
-import java.util.Date;
-
 public class Singol_match {
 	private String date;
 	private String date_time;
