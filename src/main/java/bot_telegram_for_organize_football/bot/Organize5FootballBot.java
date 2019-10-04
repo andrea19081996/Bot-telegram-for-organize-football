@@ -117,6 +117,12 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 				this.setting_match.put(chat_id, singol);
 				execution(message);
 				
+			} else if(message_text.equals("/help")) { 
+				
+				message.setText("Questo bot ti aiuterà ad organizzare una partita 5vs5:soccer::\nAttraverso il comando /day_time potrai inserire il giorno in cui vuoi effettuare la partita\n"
+						+ "Attraverso il comando /list potrai vedere le persone che si sono registrate per la partita da te creata\n");
+				execution(message);
+				
 			} 
 			
 		} 
