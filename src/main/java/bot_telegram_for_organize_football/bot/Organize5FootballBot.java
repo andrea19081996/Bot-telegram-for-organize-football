@@ -18,6 +18,8 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import com.vdurmont.emoji.EmojiParser;
+
 public class Organize5FootballBot extends TelegramLongPollingBot{
 
 	private Map<Long,Set<String>> match= new HashMap<Long, Set<String>>();
@@ -34,7 +36,6 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			String message_text= update.getMessage().getText().toLowerCase();
 			message_text=message_text.replace("ì", "i");
 			message_text=message_text.replace("í", "i");
-			message_text=message_text.replace("  ", " ");
 			long chat_id= update.getMessage().getChatId();
 			
 			
@@ -54,7 +55,9 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			if (current_match==null) {
 				current_match= new HashSet<String>();
 			}
+			
 			Singol_match singol= setting_match.get(chat_id);
+			
 			if(is_a_date(message_text) && singol!=null && singol.isBool()) {
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
 				LocalDateTime now = LocalDateTime.now();
@@ -89,7 +92,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			} else if(message_text.equals("ci sono") || message_text.equals("presente") || message_text.equals("ci sto")) {
 				
 				if(this.setting_match.get(chat_id)==null) {
-					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+					message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00\nUsa il comando /day_time per impostare una partita");
 					execution(message);
 				}else {
 					booking(chat_id, message, user, this.match, this.setting_match.get(chat_id).getDate_time());
@@ -119,8 +122,10 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 				
 			} else if(message_text.equals("/help")) { 
 				
-				message.setText("Questo bot ti aiuterà ad organizzare una partita 5vs5:soccer::\nAttraverso il comando /day_time potrai inserire il giorno in cui vuoi effettuare la partita\n"
-						+ "Attraverso il comando /list potrai vedere le persone che si sono registrate per la partita da te creata\n");
+				String newMessage= "Questo bot ti aiuterà ad organizzare una partita 5vs5 :soccer: :\nAttraverso il comando /day_time potrai inserire il giorno in cui vuoi effettuare la partita\n"
+						+ "Attraverso il comando /list potrai vedere le persone che si sono registrate per la partita da te creata\n";
+				newMessage= EmojiParser.parseToUnicode(newMessage);
+				message.setText(newMessage);
 				execution(message);
 				
 			} 
@@ -144,6 +149,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 
 			}
 			match.put(chat_id, current_match);
+			match_person= EmojiParser.parseToUnicode(match_person);
 			message.setText(match_person);
 		} else {
 			if(current_match.contains(user)) {
@@ -199,7 +205,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 		calendar1.setTime(new_date);
 		
 		
-		if(this.setting_match.get(chat_id)!=null) {
+		if(this.setting_match.get(chat_id)!=null && this.setting_match.get(chat_id).getDate()!=null) {
 			Date old= new SimpleDateFormat("yyyy/MM/dd").parse(this.setting_match.get(chat_id).getDate());
 			Calendar calendar2= Calendar.getInstance();
 			calendar2.setTime(old);
