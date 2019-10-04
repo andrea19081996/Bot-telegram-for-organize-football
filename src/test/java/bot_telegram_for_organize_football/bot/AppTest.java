@@ -48,7 +48,7 @@ public class AppTest extends TestCase {
     	
     	String user="filippo";
     	
-    	Organize5FootballBot.booking(2147483649L, message, user, match, "10/09/2019");
+    	Organize5FootballBot.booking(2147483649L, message, user, match, "lunedi 19:00");
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set2= new HashSet<String>();
@@ -92,7 +92,7 @@ public class AppTest extends TestCase {
     	
     	String user="filippo";
     	
-    	Organize5FootballBot.booking(1147483649L, message, user, match, "10/09/2019");
+    	Organize5FootballBot.booking(1147483649L, message, user, match, "lunedi 19:00");
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set4= new HashSet<String>();
@@ -119,7 +119,7 @@ public class AppTest extends TestCase {
     	
     	String user="mario";
     	
-    	Organize5FootballBot.booking(2147483649L, message, user, match, "10/09/2019");
+    	Organize5FootballBot.booking(2147483649L, message, user, match, "lunedi 19:00");
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set2= new HashSet<String>();
@@ -152,7 +152,7 @@ public class AppTest extends TestCase {
     	
     	String user="andrea";
     	
-    	Organize5FootballBot.booking(2147483649L, message, user, match, "10/09/2019");
+    	Organize5FootballBot.booking(2147483649L, message, user, match, "lunedi 19:00");
     	
     	Map<Long,Set<String>> match2= new HashMap<Long, Set<String>>();
     	Set<String> set2= new HashSet<String>();
@@ -170,6 +170,23 @@ public class AppTest extends TestCase {
     	
     	assertEquals(match, match2);
     	System.out.println(message.getText());
-    	assertEquals(message.getText(), "Partità per GIORNO alle ore XX: \na\nb\nc\nd\nandrea\nluca\ne\nf\ngianluca\nmario\n\nFormazione al completo");
+    	assertEquals(message.getText(), "Partita per lunedi alle ore 19:00: \na\nb\nc\nd\nandrea\nluca\ne\nf\ngianluca\nmario\n\nFormazione al completo");
+    }
+    
+    /*test for method is_a_date*/
+    public void testIs_a_date() {
+    	String aux="lunedi 19:00 ciao";
+    	
+    	Boolean result= Organize5FootballBot.is_a_date(aux);
+    	
+    	assertFalse(result);
+    }
+    
+    public void testIs_a_date2() {
+    	String aux="lunedi 19:00";
+    	
+    	Boolean result= Organize5FootballBot.is_a_date(aux);
+    	
+    	assertTrue(result);
     }
 }

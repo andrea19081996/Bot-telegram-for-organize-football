@@ -57,9 +57,6 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			
 			if(is_a_date(message_text)) {
 				Singol_match singol= setting_match.get(chat_id);
-//				Calendar calendar= Calendar.getInstance();
-//				System.out.println(calendar.toString());
-//				Date date = new Date();
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
 				LocalDateTime now = LocalDateTime.now();  
 				System.out.println(dtf.format(now));
@@ -74,11 +71,6 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 				this.match.remove(chat_id);
 				message.setText("Impostata partita per " + message_text);
 				execution(message);
-			
-//			} else if(this.setting_match.get(chat_id)==null) {
-//				
-//				message.setText("Prima di inserire persone nella partita bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
-//				execution(message);
 				
 			/*case booking of a person*/
 			}else if (message_text.equals("non ci sono") || message_text.equals("assente") || message_text.contains("non ci sto")) {
@@ -112,16 +104,6 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 				execution(message);
 				
 			} 
-			
-//			message.setChatId(chat_id);
-//			message.setText("prova");
-			
-			
-//			try {
-//				execute(message);
-//			} catch (TelegramApiException e) {
-//				e.printStackTrace();
-//			}
 			
 		} 
 		
@@ -188,10 +170,6 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	/*used for clean the old data*/
 	public void clean_data(long chat_id) throws ParseException {
 		boolean i;
-//		Date now= new Date();
-//		Calendar calendar1= Calendar.getInstance();
-//		calendar1.setTime(now);
-//		System.out.println(calendar1.getTime());
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
 		LocalDateTime now = LocalDateTime.now();
 		System.out.println(dtf.format(now));
@@ -228,9 +206,9 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 		
 	}
 	
-	public boolean is_a_date(String message) {
+	public static boolean is_a_date(String message) {
 		String[] array_message= message.split(" ");
-		if (array_message[0]== null)
+		if (array_message[0]== null || array_message.length>2)
 			return false;
 		
 		if (is_a_day(array_message[0]) && is_a_time(array_message[1])) {
@@ -241,7 +219,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	}
 	
 	
-	public boolean is_a_day(String day) {
+	public static boolean is_a_day(String day) {
 		day=day.toLowerCase();
 		if (day.equals("lunedi") || day.equals("martedi") || day.equals("mercoledi") || day.equals("giovedi") || day.equals("venerdi") || day.equals("sabato") || day.equals("domenica"))
 			return true;
@@ -249,7 +227,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			return false;
 	}
 	
-	public boolean is_a_time(String time) {
+	public static boolean is_a_time(String time) {
 		time=time.replace(" ", "");
 		String[] array_time= time.split(":");
 		int hours= Integer.parseInt(array_time[0]);
@@ -264,8 +242,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 	
 	@Override
 	public String getBotToken() {
-		/*token of the bot is in the private class*/
-//		return AuxiliarClass.getToken();
+		/*token of the bot */
 		return System.getenv("HEROKU_AUX");
 	}
 
