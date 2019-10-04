@@ -140,7 +140,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			String list_person_match= list_person_match(current_match);
 			match_person= match_person.concat(list_person_match);
 			if(current_match.size()==10) {
-				match_person= match_person.concat("\nFormazione al completo");
+				match_person= match_person.concat("\nFormazione al completo :soccer:");
 
 			}
 			match.put(chat_id, current_match);
