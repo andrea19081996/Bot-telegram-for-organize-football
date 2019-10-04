@@ -34,6 +34,7 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			
 			String message_text= update.getMessage().getText().toLowerCase();
 			message_text=message_text.replace("ì", "i");
+			message_text=message_text.replace("í", "i");
 			long chat_id= update.getMessage().getChatId();
 			
 			
