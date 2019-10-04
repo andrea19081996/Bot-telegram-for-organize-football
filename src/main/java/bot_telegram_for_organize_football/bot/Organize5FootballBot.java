@@ -21,7 +21,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 public class Organize5FootballBot extends TelegramLongPollingBot{
 
 	private Map<Long,Set<String>> match= new HashMap<Long, Set<String>>();
-	private Map<Long, Singol_match> setting_match = new HashMap<Long, Singol_match>() ; 
+	private Map<Long, Singol_match> setting_match = new HashMap<Long, Singol_match>();
 	
 	public String getBotUsername() {
 		return "Organize5FootballBot";
@@ -54,19 +54,22 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 			if (current_match==null) {
 				current_match= new HashSet<String>();
 			}
-			
-			if(is_a_date(message_text)) {
-				Singol_match singol= setting_match.get(chat_id);
+			Singol_match singol= setting_match.get(chat_id);
+			if(is_a_date(message_text) && singol!=null && singol.isBool()) {
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");  
-				LocalDateTime now = LocalDateTime.now();  
-				System.out.println(dtf.format(now));
+				LocalDateTime now = LocalDateTime.now();
 				String date= dtf.format(now);
-				if(singol==null)
-					singol= new Singol_match(date, message_text);
-				else {
-					singol.setDate(date);
-					singol.setDate_time(message_text);
-				}
+				
+//				if(singol==null)
+//					singol= new Singol_match(date, message_text);
+//				else {
+//					singol.setDate(date);
+//					singol.setDate_time(message_text);
+//				}
+				
+				singol.setDate(date);
+				singol.setDate_time(message_text);
+				singol.setBool(false);
 				this.setting_match.put(chat_id, singol);
 				this.match.remove(chat_id);
 				message.setText("Impostata partita per " + message_text);
@@ -95,12 +98,23 @@ public class Organize5FootballBot extends TelegramLongPollingBot{
 				
 			} else if(message_text.equals("/list")) {
 				
-				message.setText("Al momento ci sono\n"+list_person_match(current_match));
-				execution(message);
+				if(this.setting_match.get(chat_id)==null) {
+					message.setText("Prima bisogna scegliere un giorno per la partita\nEsempio Lunedì 19:00");
+					execution(message);
+				}else {
+					String[] date_array= this.setting_match.get(chat_id).getDate_time().split(" ");
+					message.setText("Partita per "+date_array[0]+" alle ore "+date_array[1]+": \n"+list_person_match(current_match));
+					execution(message);
+				}
 				
 			} else if(message_text.equals("/day_time")) { 
 				
-				message.setText("Scegli un giorno e un orario in cui far svolgere la partita\n Scrivere GIORNO e ORA per impostare correttamente la partita\n Esempio: Lunedì 19:00");
+				message.setText("Scegli un giorno e un orario in cui far svolgere la partita\nScrivere GIORNO e ORA per impostare correttamente la partita\nEsempio: Lunedì 19:00");
+				if(singol==null)
+					singol= new Singol_match();
+				else 
+					singol.setBool(true);
+				this.setting_match.put(chat_id, singol);
 				execution(message);
 				
 			} 

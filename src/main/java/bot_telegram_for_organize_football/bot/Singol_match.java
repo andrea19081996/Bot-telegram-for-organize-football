@@ -3,10 +3,12 @@ package bot_telegram_for_organize_football.bot;
 public class Singol_match {
 	private String date;
 	private String date_time;
+	private boolean bool;
 	
-	public Singol_match(String date, String date_time) {
-		this.date=date;
-		this.date_time=date_time;
+	public Singol_match() {
+		this.date=null;
+		this.date_time=null;
+		this.bool=true;
 	}
 
 	public String getDate() {
@@ -30,5 +32,11 @@ public class Singol_match {
 		this.date_time=null;
 	}
 	
-	
+	public boolean isBool() {
+		return bool;
+	}
+
+	public void setBool(boolean bool) {
+		this.bool = bool;
+	}
 }
